@@ -261,3 +261,26 @@ Trait type: Iris
 ```
 
 Hope you create some awesome artworks with this code 👄
+
+Sequential Generation Instructions!
+
+Currently, sequential generation is fairly rigid and needs to be 'safer', but here are the instructons:
+
+## Folder setup
+
+If you have a folder of items you want run sequentially instead of through weighted rarity, append the folder name with $ (not sure if this is useable across OS's but can be swapped to something new easily)
+
+An example would be Base$
+
+## Configuration change
+
+Once you have changed the folder name, head to the config.js and set sequential to true
+const sequential = true;
+
+## Pitfalls
+
+As previously mentioned, there are some pitfalls. Currently, THE AMOUNT OF ITEMS IN SEQUENTIAL FOLDERS MUST EQUAL {growEditionSizeTo}. So if its a 10k project it must have 10k unique items in ALL folders marked with '$'.
+
+## Future Updates
+
+Add a flag to determine if a user wants to run through the sequence again mid-generation. so if a 10k project only has 5k unique smiles but wants them all added twice to the entire collection, wrap the index for sequencing back to 0.
