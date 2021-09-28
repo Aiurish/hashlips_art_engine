@@ -9,10 +9,10 @@ const baseUri = "ipfs://NewUriToReplace";
 
 const layerConfigurations = [
   {
-    growEditionSizeTo: 4,
+    growEditionSizeTo: 10,
     layersOrder: [
       { name: "Base$" },
-      { name: "Eye_Brow" },
+      { name: "Eye_Brow$" },
       { name: "Eyes" },
       { name: "Mouth" },
       { name: "Nose" },
@@ -24,8 +24,12 @@ const shuffleLayerConfigurations = false;
 
 const debugLogs = false;
 
-//if you want folders to run sequentially instead of randomly set this to true
+//if you want folders (marked with '$') to run sequentially instead of randomly set this to true
 const sequential = true;
+
+//if you want the sequence to "restart" once it reaches the end of the folder set this to true
+//else, the layer will be removed from further generations
+const sequentialLooping = false;
 
 const format = {
   width: 512,
@@ -62,5 +66,6 @@ module.exports = {
   shuffleLayerConfigurations,
   debugLogs,
   sequential,
+  sequentialLooping,
   extraMetadata,
 };
