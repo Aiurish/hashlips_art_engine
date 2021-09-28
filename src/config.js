@@ -29,7 +29,7 @@ const sequential = true;
 
 //if you want the sequence to "restart" once it reaches the end of the folder set this to true
 //else, the layer will be removed from further generations
-const sequentialLooping = false;
+const sequentialLooping = true;
 
 const format = {
   width: 512,
