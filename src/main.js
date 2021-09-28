@@ -280,7 +280,7 @@ const startCreating = async () => {
     while (
       editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
     ) {
-      //Nothing like a good ol' for loop inside of two whiles :')
+      //Nothing like a good ol' for loop inside of two whiles :') (this could definitely be made way more efficient)
       //if sequenceLooping is disabled, remove layer once all items have been rendered
       for (var i = 0; i < layers.length; i++) {
         if (
