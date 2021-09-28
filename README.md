@@ -262,7 +262,7 @@ Trait type: Iris
 
 Hope you create some awesome artworks with this code 👄
 
-Sequential Generation Instructions!
+# Sequential Generation Instructions!
 
 Currently, sequential generation is fairly rigid and needs to be 'safer', but here are the instructons:
 
