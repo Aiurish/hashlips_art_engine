@@ -277,9 +277,17 @@ An example would be Base$
 Once you have changed the folder name, head to the config.js and set sequential to true
 const sequential = true;
 
-## Pitfalls
+If you don't have the same amount of items in your sequence folder as there are total images, you can set sequentialLooping to true to have the folder set back to 0 and start again until all files are created.
 
-As previously mentioned, there are some pitfalls. Currently, THE AMOUNT OF ITEMS IN SEQUENTIAL FOLDERS MUST EQUAL {growEditionSizeTo}. So if its a 10k project it must have 10k unique items in ALL folders marked with '$'.
+Example: you want 10k total faces but only have 100 unique smiles that you want run sequentially, with looping on after you hit smiles #100, the sequence will reset back 0. At the end of the generation you will have 10k smiles in a sequence of 100 each.
+
+const sequentialLooping = true;
+
+If you set sequentialLooping to false, the folders will be removed form further generation, removing that attribute entirely from the images.
+
+Example, you want 10k total facs but only have 100 unique smiles, after the 100th image is generated, the remaining 9899 will not have any smiles.
+
+If the amount of items in your sequential folder(s) is equivalent to the total amount of images generated, looping wont matter :^)
 
 ## Future Updates
 

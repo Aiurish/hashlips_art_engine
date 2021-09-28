@@ -23,6 +23,7 @@ const {
   shuffleLayerConfigurations,
   debugLogs,
   sequential,
+  sequentialLooping,
   extraMetadata,
 } = require(path.join(basePath, "/src/config.js"));
 const canvas = createCanvas(format.width, format.height);
@@ -84,6 +85,7 @@ const layersSetup = (layersOrder) => {
     blendMode:
       layerObj["blend"] != undefined ? layerObj["blend"] : "source-over",
     opacity: layerObj["opacity"] != undefined ? layerObj["opacity"] : 1,
+    sequence: 0,
   }));
   return layers;
 };
@@ -145,18 +147,20 @@ const drawElement = (_renderObject) => {
   addAttributes(_renderObject);
 };
 
-const constructLayerToDna = (_dna = [], _layers = [], _editionCount) => {
+const constructLayerToDna = (_dna = [], _layers = []) => {
   let mappedDnaToLayers = _layers.map((layer, index) => {
     if (sequential) {
       let selectedElement = null;
       if (layer.name.includes("$")) {
-        //need to add a flag for whether the index should wrap back to 0.
-        //If a user wants to create 10k images but a folder that is sequential only has 2k items
-        //allow them to have that essentially run through 5 times sequentially.
-        //currently if the edition count is higher than the amount of items in the sequential folder(s) it will crash
-        if (_editionCount < layer.elements.length) {
-          selectedElement = layer.elements[_editionCount];
+        if (layer.sequence < layer.elements.length) {
+          selectedElement = layer.elements[layer.sequence];
+        } else {
+          if (sequentialLooping) {
+            layer.sequence = 0;
+            selectedElement = layer.elements[layer.sequence];
+          }
         }
+        layer.sequence++;
       } else {
         selectedElement = layer.elements.find(
           (e) => e.id == cleanDna(_dna[index])
@@ -169,7 +173,7 @@ const constructLayerToDna = (_dna = [], _layers = [], _editionCount) => {
         selectedElement: selectedElement,
       };
     } else {
-      selectedElement = layer.elements.find(
+      let selectedElement = layer.elements.find(
         (e) => e.id == cleanDna(_dna[index])
       );
       return {
@@ -180,6 +184,7 @@ const constructLayerToDna = (_dna = [], _layers = [], _editionCount) => {
       };
     }
   });
+
   return mappedDnaToLayers;
 };
 
@@ -192,7 +197,7 @@ const createDna = (_layers) => {
   let randNum = [];
   _layers.forEach((layer) => {
     var totalWeight = 0;
-    if (layer.name.includes("$")) {
+    if (sequential && layer.name.includes("$")) {
       for (var i = 0; i < layer.elements.length; i++) {
         return randNum.push(
           `${layer.elements[i].id}:${layer.elements[i].filename}`
@@ -275,11 +280,21 @@ const startCreating = async () => {
     while (
       editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
     ) {
+      //Nothing like a good ol' for loop inside of two whiles :')
+      //if sequenceLooping is disabled, remove layer once all items have been rendered
+      for (var i = 0; i < layers.length; i++) {
+        if (
+          !sequentialLooping &&
+          layers[i].sequence >= layers[i].elements.length
+        ) {
+          layers.splice(i, 1);
+          i--;
+        }
+      }
+
       let newDna = createDna(layers);
       if (isDnaUnique(dnaList, newDna)) {
-        //add the editionCount parameter here to use as an index for sequential folders.
-        //need to -1 because editionCount is a 1 index not 0
-        let results = constructLayerToDna(newDna, layers, editionCount - 1);
+        let results = constructLayerToDna(newDna, layers);
         let loadedElements = [];
 
         results.forEach((layer) => {
