@@ -31,6 +31,7 @@ const ctx = canvas.getContext("2d");
 var metadataList = [];
 var attributesList = [];
 var dnaList = [];
+var count = 0;
 const buildSetup = () => {
   if (fs.existsSync(buildDir)) {
     fs.rmdirSync(buildDir, { recursive: true });
@@ -119,7 +120,7 @@ const addMetadata = (_dna, _edition) => {
     date: dateTime,
     ...extraMetadata,
     attributes: attributesList,
-    compiler: "HashLips Art Engine",
+    compiler: "HashLips Art Engine (Darce256 Fork)",
   };
   metadataList.push(tempMetadata);
   attributesList = [];
@@ -198,11 +199,9 @@ const createDna = (_layers) => {
   _layers.forEach((layer) => {
     var totalWeight = 0;
     if (sequential && layer.name.includes("$")) {
-      for (var i = 0; i < layer.elements.length; i++) {
-        return randNum.push(
-          `${layer.elements[i].id}:${layer.elements[i].filename}`
-        );
-      }
+      return randNum.push(
+        `${layer.elements[count].id}:${layer.elements[count].filename}`
+      );
     } else {
       layer.elements.forEach((element) => {
         totalWeight += element.weight;
@@ -220,6 +219,7 @@ const createDna = (_layers) => {
       }
     }
   });
+  count++;
   return randNum;
 };
 
@@ -239,6 +239,12 @@ const saveMetaDataSingleFile = (_editionCount) => {
     JSON.stringify(metadata, null, 2)
   );
 };
+
+function parseMetadataFromName(_fileName) {
+  var attributesFromName = _fileName.split("_");
+  console.log(attributesFromName);
+  return attributesFromName;
+}
 
 function shuffle(array) {
   let currentIndex = array.length,
@@ -280,15 +286,13 @@ const startCreating = async () => {
     while (
       editionCount <= layerConfigurations[layerConfigIndex].growEditionSizeTo
     ) {
-      //Nothing like a good ol' for loop inside of two whiles :') (this could definitely be made way more efficient)
       //if sequenceLooping is disabled, remove layer once all items have been rendered
-      for (var i = 0; i < layers.length; i++) {
-        if (
-          !sequentialLooping &&
-          layers[i].sequence >= layers[i].elements.length
-        ) {
-          layers.splice(i, 1);
-          i--;
+      if (!sequentialLooping) {
+        for (var i = 0; i < layers.length; i++) {
+          if (layers[i].sequence >= layers[i].elements.length) {
+            layers.splice(i, 1);
+            i--;
+          }
         }
       }
 
